@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JKStore - Cuentas Premium</title>
+    <style>
+        /* --- PALETA DE COLORES BRILLANTES Y NEÓN --- */
+        :root {
+            --bg-principal: #0b0f19;
+            --bg-tarjeta: #161f32;
+            --neon-cyan: #00f2fe;
+            --neon-magenta: #fe019a;
+            --neon-morado: #7928ca;
+            --texto-blanco: #ffffff;
+            --texto-mutado: #94a3b8;
+            --exito: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-principal);
+            color: var(--texto-blanco);
+            overflow-x: hidden;
+        }
+
+        /* --- CABECERA (NAVBAR) --- */
+        header {
+            background: rgba(22, 31, 50, 0.8);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            border-bottom: 2px solid var(--neon-cyan);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cart-icon-container {
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            border: 1px solid rgba(0, 242, 254, 0.3);
+        }
+
+        .cart-counter {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--neon-magenta);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- BANNER HERO --- */
+        .hero {
+            margin-top: 80px;
+            padding: 4rem 2rem;
+            text-align: center;
+            background: radial-gradient(circle at center, var(--neon-morado) 0%, transparent 70%);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 span {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 15px var(--neon-cyan);
+        }
+
+        .hero p {
+            color: var(--texto-mutado);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        /* --- DISTRIBUCIÓN PRINCIPAL --- */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 992px) {
+            .main-content { grid-template-columns: 3fr 1fr; }
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .product-card {
+            background-color: var(--bg-tarjeta);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-magenta);
+            box-shadow: 0 5px 15px rgba(254, 1, 154, 0.2);
+        }
+
+        /* --- CONTENEDOR DE LOGOS --- */
+        .product-image-container {
+            height: 140px;
+            background-color: #0e1422;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1.2rem;
+        }
+
+        .product-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .product-info {
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .product-title { font-size: 1.15rem; margin-bottom: 0.4rem; font-weight: 700; }
+        .product-desc { color: var(--texto-mutado); font-size: 0.85rem; margin-bottom: 1.2rem; flex-grow: 1; }
+        
+        .product-price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+
+        .product-price { font-size: 1.25rem; font-weight: 800; color: var(--neon-cyan); }
+        
+        .btn-add {
+            background: linear-gradient(90deg, var(--neon-magenta), var(--neon-morado));
+            color: white;
+            border: none;
+            padding: 0.5rem 0.9rem;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* --- PANEL LATERAL DEL CARRITO --- */
+        .cart-panel {
+            background-color: var(--bg-tarjeta);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 1px solid rgba(0, 242, 254, 0.2);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .cart-panel h2 { font-size: 1.3rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .cart-items { max-height: 280px; overflow-y: auto; margin-bottom: 1rem; }
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+        }
+
+        .cart-empty { color: var(--texto-mutado); text-align: center; padding: 1.5rem 0; font-style: italic; }
+        .cart-total-row { display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: bold; margin-top: 1rem; }
+        
+        .btn-checkout {
+            width: 100%;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-morado));
+            color: white;
+            font-weight: bold;
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* --- VENTANA EMERGENTE (MODAL QR) --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .modal-box {
+            background-color: var(--bg-tarjeta);
+            padding: 2rem;
+            border-radius: 20px;
+            max-width: 400px;
+            width: 92%;
+            text-align: center;
+            border: 2px solid var(--neon-cyan);
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.3);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.6rem;
+            cursor: pointer;
+            color: var(--texto-mutado);
+        }
+
+        .qr-container {
+            width: 240px;
+            height: 380px;
+            background-color: white;
+            margin: 1.2rem auto;
+            padding: 6px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .qr-container img { width: 100%; height: 100%; object-fit: contain; }
+        .monto-pagar { font-size: 1.8rem; color: var(--neon-magenta); font-weight: 800; margin: 0.4rem 0; }
+        .btn-confirm-pay { background-color: var(--exito); color: white; width: 100%; padding: 0.8rem; border-radius: 8px; border: none; font-weight: bold; margin-top: 0.8rem; cursor: pointer; }
+        footer { text-align: center; padding: 2rem; color: var(--texto-mutado); font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo">JKSTORE</div>
+            <div class="cart-icon-container">
+                🛒 Lista
+                <div class="cart-counter" id="cart-badge">0</div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1>¡Bienvenido a mi <span>Tienda Virtual</span>! 🚀</h1>
+        <p>Aquí encontrarás tus plataformas de streaming, música y entretenimiento favoritas en un solo lugar.<br>
+        Con <strong>entrega inmediata, precios de locura y garantía total</strong> en cada uno de tus servicios. <br><br>
+        ✨ ¡Elige tus cuentas, paga de forma segura con tu banco de confianza y empieza a disfrutar hoy mismo! ✨</p>
+    </section>
+
+    <main class="main-content">
+        <section>
+            <div class="products-grid" id="products-container"></div>
+        </section>
+
+        <aside class="cart-panel">
+            <h2>Mi Pedido <span>🛍️</span></h2>
+            <div class="cart-items" id="cart-items-container">
+                <div class="cart-empty">No has seleccionado cuentas</div>
+            </div>
+            <div class="cart-total-row">
+                <span>Total:</span>
+                <span id="cart-total-value">Bs. 0.00</span>
+            </div>
+            <button class="btn-checkout" onclick="abrirPasarelaQR()">Pagar con QR Altoke</button>
+        </aside>
+    </main>
+
+    <div class="modal-overlay" id="qr-modal">
+        <div class="modal-box">
+            <span class="modal-close" onclick="cerrarPasarelaQR()">&times;</span>
+            <h3 style="color: #f37021;">Cobro con QR Altoke 📱</h3>
+            <p style="font-size: 0.85rem; color: var(--texto-mutado); margin-top: 4px;">Escanea mediante tu billetera o aplicación móvil</p>
+            
+            <div class="qr-container">
+                <img src="qr.jpeg" alt="QR Altoke Real">
+            </div>
+
+            <p style="font-size: 0.95rem;">Monto Total de tu Compra:</p>
+            <div class="monto-pagar" id="modal-monto-total">Bs. 0.00</div>
+            <button class="btn-confirm-pay" onclick="enviarPedidoWhatsApp()">Ya pagué, activar cuenta 🚀</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 JKStore. Cuentas Streaming Garantizadas.</p>
+    </footer>
+
+    <script>
+        const productos = [
+            { id: 1, titulo: "Netflix Premium", desc: "4K UHD - Perfil privado sin caídas. 1 Mes.", precio: 20, imgUrl: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" },
+            { id: 2, titulo: "Disney+ & ESPN", desc: "Acceso total a películas, series y deportes. 1 Mes.", precio: 20, imgUrl: "https://upload.wikimedia.org/wikipedia/commons/3/3e/Disney%2B_logo.svg" },
+            { id: 3, titulo: "Prime Video", desc: "Todo el catálogo de Amazon en Full HD. 1 Mes.", precio: 10, imgUrl: "https://upload.wikimedia.org/wikipedia/commons/1/11/Amazon_Prime_Video_logo.svg" },
+            { id: 4, titulo: "Amazon Luna", desc: "Gaming premium directo en la nube. 1 Mes.", precio: 30, imgUrl: "logo 2.jpeg" }, 
+            { id: 5, titulo: "HBO Max (Max)", desc: "Series exclusivas y películas de Warner. 1 Mes.", precio: 10, imgUrl: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Max_logo.svg" },
+            { id: 6, titulo: "Paramount Plus", desc: "Las mejores películas y transmisiones en vivo. 1 Mes.", precio: 10, imgUrl: "logo 3.jpeg" }, 
+            { id: 7, titulo: "Crunchyroll Premium", desc: "Todo el anime que quieras sin anuncios. 1 Mes.", precio: 10, imgUrl: "logo 4.jpeg" }, 
+            { id: 8, titulo: "Canva Pro", desc: "Acceso a todas las herramientas de diseño. 1 Mes.", precio: 15, imgUrl: "logo 1.jpeg" }, 
+            { id: 9, titulo: "Spotify Premium", desc: "Música ilimitada sin anuncios y modo offline. 1 Mes.", precio: 15, imgUrl: "https://upload.wikimedia.org/wikipedia/commons/2/26/Spotify_logo_with_text.svg" }
+        ];
+
+        const MI_WHATSAPP = "59176877328"; 
+        let carrito = [];
+
+        function cargarProductos() {
+            const container = document.getElementById('products-container');
+            container.innerHTML = productos.map(prod => `
+                <div class="product-card">
+                    <div class="product-image-container">
+                        <img src="${prod.imgUrl}" alt="${prod.titulo}">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${prod.titulo}</h3>
+                        <p class="product-desc">${prod.desc}</p>
+                        <div class="product-price-row">
+                            <span class="product-price">Bs. ${prod.precio}</span>
+                            <button class="btn-add" onclick="agregarAlCarrito(${prod.id})">Añadir</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function agregarAlCarrito(id) {
+            const prod = productos.find(p => p.id === id);
+            const item = carrito.find(i => i.id === id);
+            if (item) { item.cantidad += 1; } else { carrito.push({ ...prod, cantidad: 1 }); }
+            actualizarInterfacesCarrito();
+        }
+
+        function actualizarInterfacesCarrito() {
+            const container = document.getElementById('cart-items-container');
+            const badge = document.getElementById('cart-badge');
+            const totalVal = document.getElementById('cart-total-value');
+            badge.innerText = carrito.reduce((acc, item) => acc + item.cantidad, 0);
+
+            if (carrito.length === 0) {
+                container.innerHTML = '<div class="cart-empty">No has seleccionado cuentas</div>';
+                totalVal.innerText = "Bs. 0.00";
+                return;
+            }
+
+            container.innerHTML = carrito.map(item => `
+                <div class="cart-item">
+                    <div><strong>${item.titulo}</strong><br><small style="color:var(--texto-mutado)">Cant: ${item.cantidad}</small></div>
+                    <span style="color:var(--neon-cyan); font-weight:bold;">Bs. ${item.precio * item.cantidad}</span>
+                </div>
+            `).join('');
+
+            const total = carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
+            totalVal.innerText = `Bs. ${total.toFixed(2)}`;
+        }
+
+        function abrirPasarelaQR() {
+            if (carrito.length === 0) { alert("Tu lista de pedido está vacía. Añade una cuenta primero."); return; }
+            const total = carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
+            document.getElementById('modal-monto-total').innerText = `Bs. ${total.toFixed(2)}`;
+            document.getElementById('qr-modal').classList.add('active');
+        }
+
+        function cerrarPasarelaQR() { document.getElementById('qr-modal').classList.remove('active'); }
+
+        function enviarPedidoWhatsApp() {
+            let mensaje = "¡Hola JKStore! Acabo de realizar el pago mediante QR Altoke. Aquí tienes los detalles de mi compra:\n\n";
+            carrito.forEach(item => { mensaje += `🔹 *${item.titulo}* (Cant: ${item.cantidad}) - Bs. ${item.precio * item.cantidad}\n`; });
+            const total = carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
+            mensaje += `\n💵 *Monto Total:* Bs. ${total.toFixed(2)}\n\n📌 _Te adjunto la captura de mi comprobante abajo. Por favor, genérame los accesos de mi cuenta._`;
+            window.open(`https://wa.me/${MI_WHATSAPP}?text=${encodeURIComponent(mensaje)}`, '_blank');
+            cerrarPasarelaQR();
+        }
+
+        cargarProductos();
+    </script>
+</body>
+</html>
